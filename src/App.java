@@ -1,17 +1,5 @@
 import java.util.Scanner;
 
-// class Item {
-//     String name;
-//     String category;
-//     int stock;
-
-//     Item(String name, String category, int stock) {
-//         this.name = name;
-//         this.category = category;
-//         this.stock = stock;
-//     }
-// }
-
 // items[itemID][0] = name
 // items[itemID][1] = category
 // items[itemID][2] = stock
@@ -21,6 +9,7 @@ public class App {
     static final Scanner Laksa13 = new Scanner(System.in);
     static Boolean status = true;
 
+    // Reusable function to show menus
     static void menus() {
         System.out.println("==== MENU INVENTORI KAFE ====");
         System.out.println("1. Tampilkan Inventori");
@@ -30,27 +19,104 @@ public class App {
         System.out.print("Pilih Menu : ");
     }
 
+    // Reusable function to back to menu
     static void backToMenu() {
         System.out.println();
         System.out.println("Tekan enter untuk kembali ke menu...");
         Laksa13.nextLine();
-        Laksa13.nextLine();
     }
 
+    // Reusable function to display data in format table
     static void displayData(String[][] items) {
         System.out.println("==== DATA INVENTORI ====");
         System.out.println();
-        System.out.printf("| %-4s | %-15s | %-10s | %4s |%n", "NO", "NAMA ITEM", "KATEGORI", "STOK");
+        System.out.printf("| %-4s | %-15s | %-10s | %-4s | %n", "No", "Nama Item", "Kategori", "Stok");
         System.out.println("---------------------------------------------");
 
         for (int i = 0; i < items.length; i++) {
             for (int j = 0; j < 1; j++) {
-                System.out.printf("| %-4d | %-15s | %-10s | %4s |%n", i + 1, items[i][0], items[i][1], items[i][2]);
+                System.out.printf("| %-4s | %-15s | %-10s | %-4s | %n", String.valueOf(i + 1), items[i][0], items[i][1],
+                        items[i][2]);
             }
         }
 
     }
 
+    static String[][] addItemData(String[][] items) {
+        Laksa13.nextLine();
+        System.out.println("==== TAMBAH ITEM ====");
+
+        // Check the items array full or not
+        if (items.length >= 10) {
+            System.out.println("Maaf, inventori sudah penuh!");
+            return items;
+        }
+
+        System.out.print("Masukkan nama item baru: ");
+        String itemName = Laksa13.nextLine();
+
+        // Compare integer value to another number, and the result is boolean
+        // https://stackoverflow.com/questions/52799672/i-am-not-able-to-convert-int-to-boolean-in-java-in-the-following-code
+        boolean itemsAvailable = (items.length != 0);
+        if (itemsAvailable) {
+            while (items[items.length - 1][0].equalsIgnoreCase(itemName)) {
+                System.out.println("Item dengan nama tersebut sudah ada!");
+                System.out.print("Masukkan nama item baru: ");
+                itemName = Laksa13.nextLine();
+            }
+        }
+
+        while (itemName.trim().isEmpty()) {
+            System.out.println("Nama item tidak boleh kosong! Silakan coba lagi.");
+            System.out.print("Masukkan nama item baru: ");
+            itemName = Laksa13.nextLine();
+        }
+
+        System.out.print("Masukkan kategori item baru: ");
+        String itemCategory = Laksa13.nextLine();
+
+        while (itemCategory.trim().isEmpty()) {
+            System.out.println("Kategori item tidak boleh kosong! Silakan coba lagi.");
+            System.out.print("Masukkan kategori item baru: ");
+            itemCategory = Laksa13.nextLine();
+        }
+
+        System.out.print("Masukkan jumlah stok awal (harus lebih dari 0): ");
+        int itemStock = Laksa13.nextInt();
+
+        while (itemStock < 1) {
+            System.out.println("Stok yang dimasukkan harus lebih dari 0! Silakan coba lagi.");
+            System.out.print("Masukkan jumlah stok awal (harus lebih dari 0): ");
+            itemStock = Laksa13.nextInt();
+        }
+
+        String[][] newItems = new String[items.length + 1][3]; // Row item + 1, column 3
+
+        // Can use this iterative code
+        // for (int i = 0; i < items.length; i++) {
+        // for (int j = 0; j < items[i].length; j++) {
+        // newItems[i][j] = items[i][j];
+        // }
+        // }
+
+        // Nor this declarative code
+        // source_arr, sourcePos, dest_arr, destPos, length
+        for (int i = 0; i < items.length; i++) {
+            System.arraycopy(items[i], 0, newItems[i], 0, items[i].length);
+        }
+
+        // Set items property
+        newItems[items.length][0] = itemName; // [0] => Nama Item
+        newItems[items.length][1] = itemCategory; // [1] => Kategori
+        newItems[items.length][2] = String.valueOf(itemStock); // [2] => Stok Item
+
+        System.out.println(
+                "Item baru berhasil ditambahkan! : " + itemName + " (" + itemCategory + ") - Stok : " + itemStock);
+
+        return newItems;
+    }
+
+    // Add stock data
     static String[][] addStockData(String[][] items) {
 
         if (items.length == 0) {
@@ -83,59 +149,6 @@ public class App {
         System.out.println("Stok " + items[itemID][0] + " berhasil ditambah.");
         System.out.println("Stok sekarang: " + items[itemID][2]);
         return items;
-    }
-
-    static String[][] addItemData(String[][] items) {
-        Laksa13.nextLine();
-        System.out.println("==== TAMBAH ITEM ====");
-
-        if (items.length >= 10) {
-            System.out.println("Maaf, inventori sudah penuh!");
-            return items;
-        }
-
-        System.out.print("Masukkan nama item baru: ");
-        String itemName = Laksa13.nextLine();
-
-        while (itemName.trim().isEmpty()) {
-            System.out.println("Nama item tidak boleh kosong! Silakan coba lagi.");
-            System.out.print("Masukkan nama item baru: ");
-            itemName = Laksa13.nextLine();
-        }
-
-        System.out.print("Masukkan kategori item baru: ");
-        String itemCategory = Laksa13.nextLine();
-
-        while (itemCategory.trim().isEmpty()) {
-            System.out.println("Kategori item tidak boleh kosong! Silakan coba lagi.");
-            System.out.print("Masukkan kategori item baru: ");
-            itemCategory = Laksa13.nextLine();
-        }
-
-        System.out.print("Masukkan jumlah stok awal (harus lebih dari 0): ");
-        int itemStock = Laksa13.nextInt();
-
-        while (itemStock < 1) {
-            System.out.println("Stok yang dimasukkan harus lebih dari 0! Silakan coba lagi.");
-            System.out.print("Masukkan jumlah stok awal (harus lebih dari 0): ");
-            itemStock = Laksa13.nextInt();
-        }
-
-        String[][] newItems = new String[items.length + 1][3]; // Row item + 1, column 3
-
-        for (int i = 0; i < items.length; i++) {
-            System.arraycopy(items[i], 0, newItems[i], 0, items[i].length);
-        }
-
-        // Set items property
-        newItems[items.length][0] = itemName; // [0] => Nama Item
-        newItems[items.length][1] = itemCategory; // [1] => Kategori
-        newItems[items.length][2] = String.valueOf(itemStock); // [1] => Stok Item
-
-        System.out.println(
-                "Item baru berhasil ditambahkan! : " + itemName + " (" + itemCategory + ") - Stok : " + itemStock);
-
-        return newItems;
     }
 
     public static void main(String[] args) throws Exception {
